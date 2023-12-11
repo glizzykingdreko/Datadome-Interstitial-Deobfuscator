@@ -2,6 +2,8 @@
 
 This project, is designed to decode and simplify JavaScript files obfuscated by Datadome's new Interstitial challenge. The original script, typically obfuscated, can be transformed into a more readable and maintainable format.
 
+Check out the [datadome-interstital-encryptor](https://github.com/glizzykingdreko/Datadome-Interstital-Encryptor)
+
 ![Original script location](img/originalScriptLocation.png)
 The original script can be found as one line minimized code in the HTML file of the Interstitial challenge.
 
