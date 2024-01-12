@@ -23,6 +23,7 @@ The original script can be found as one line minimized code in the HTML file of 
 - Transforms and simplifies initial function calls and variables for enhanced readability.
 - Eliminates dead code, including unused functions and variables.
 - Improves overall code clarity, making it easier to understand and maintain.
+- Higly improved for the newest version of the challenge.
 
 ## Prerequisites
 - Node.js
@@ -47,19 +48,21 @@ The project structure is as follows:
 ├── package.json
 └── transformers
     ├── cleanCode.js
+    ├── cleanSwitchCases.js
     └── evaluateStringObf.js
 ```
 
 - `main.js`: The main script that orchestrates the deobfuscation process.
 - `transformers/`: Contains scripts for specific transformations.
     - `evaluateStringObf.js`: Handles the deobfuscation of the file.
+    - `cleanSwitchCases.js`: Removes the usless switch cases obfuscation inside functions.
     - `cleanCode.js`: Improves the readability of the code post-deobfuscation.
 
 ## Before and After Comparison
 A screenshot demonstrating the original obfuscated script and its deobfuscated version will be attached to visually highlight the effectiveness of this tool. (just a snippet of the code)
-- Original obfuscated script:
+- Original obfuscated script: (3399 lines)
   ![Original obfuscated script](img/obfuscated.png)
-- Deobfuscated script:
+- Deobfuscated script: (1266 slines)
   ![Deobfuscated script](img/deobfuscated.png)
 
 ## Contributing

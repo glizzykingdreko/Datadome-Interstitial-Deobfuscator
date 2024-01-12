@@ -140,20 +140,24 @@ const extractSecondDecodeFunction = (ast, context) => {
                 matches++;
                 if (typeof result === 'number') {
                     path.replaceWith(t.numericLiteral(result));
+                    replacements++;
                 }
                 else if (typeof result === 'string') {
                     path.replaceWith(t.stringLiteral(result));
+                    replacements++;
                 } else if (typeof result === 'boolean') {
                     path.replaceWith(t.booleanLiteral(result));
+                    replacements++;
                 } else if (result === null) {
                     path.replaceWith(t.nullLiteral())
-
                 } else if (typeof result === 'object') {
                     path.replaceWith(t.objectExpression(result));
+                    replacements++;
                 }
             }
         }
-    });    
+    });
+    return replacements;
 }
 
 module.exports = {

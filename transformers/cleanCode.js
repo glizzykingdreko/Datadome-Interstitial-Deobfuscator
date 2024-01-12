@@ -45,19 +45,20 @@ let sumBinaryExpressions = (ast) => {
 }
 
 function simplifyConcatenation(expression) {
-    if (t.isStringLiteral(expression.left) && t.isStringLiteral(expression.right)) {
-        return expression.left.value + expression.right.value;
-    } else if (t.isBinaryExpression(expression.left, { operator: '+' })) {
+    // Base case: If the entire expression is a string literal
+    if (t.isStringLiteral(expression)) {
+        return expression.value;
+    }
+    // Recursive case: If the expression is a binary expression with '+' operator
+    else if (t.isBinaryExpression(expression, { operator: '+' })) {
         const left = simplifyConcatenation(expression.left);
-        if (left !== null && t.isStringLiteral(expression.right)) {
-            return left + expression.right.value;
-        }
-    } else if (t.isBinaryExpression(expression.right, { operator: '+' })) {
         const right = simplifyConcatenation(expression.right);
-        if (right !== null && t.isStringLiteral(expression.left)) {
-            return expression.left.value + right;
+        // Concatenate only if both sides are strings
+        if (left !== null && right !== null) {
+            return left + right;
         }
     }
+    // If neither case applies, return null
     return null;
 }
 
@@ -110,9 +111,40 @@ const replaceUnusedFunction = (ast) => {
     });
 }
 
+const improveStrings = (ast) => {
+    traverse(ast, {
+        MemberExpression(path) {
+            // Check if property access is using bracket notation with a string literal
+            if (path.node.computed && t.isStringLiteral(path.node.property)) {
+                const property = path.node.property.value;
+                // Replace with dot notation
+                path.node.computed = false;
+                path.node.property = t.identifier(property);
+            }
+            // Simplify binary expressions with string literals
+            else if (path.node.property && t.isBinaryExpression(path.node.property)) {
+                const simplifiedString = simplifyConcatenation(path.node.property);
+                if (simplifiedString !== null) {
+                    path.node.property = t.stringLiteral(simplifiedString);
+                }
+            }
+        },
+        BinaryExpression(path) {
+            if (path.node.operator === '+') {
+                const simplifiedString = simplifyConcatenation(path.node);
+                if (simplifiedString !== null) {
+                    // Replace the entire BinaryExpression with a StringLiteral
+                    path.replaceWith(t.stringLiteral(simplifiedString));
+                }
+            }
+        }
+    });
+}
+
 module.exports = {
     extractDecodeList,
     sumBinaryExpressions,
     getDecodeArray,
-    replaceUnusedFunction
+    replaceUnusedFunction,
+    improveStrings
 }

@@ -14,8 +14,10 @@ const {
     extractDecodeList,
     sumBinaryExpressions,
     getDecodeArray,
-    replaceUnusedFunction
+    replaceUnusedFunction,
+    improveStrings
 } = require('./transformers/cleanCode');
+const cleanSwitchCases = require('./transformers/cleanSwitchCases');
 
 const context = {}
 
@@ -47,24 +49,15 @@ sumBinaryExpressions(ast);
 console.log("> Simplified stringLiteral expressions");
 replaceUnusedFunction(ast);
 console.log("> Removed unused functions");
-
-traverse(ast, {
-    MemberExpression(path) {
-        // Check if property access is using bracket notation with a string literal
-        if (path.node.computed && t.isStringLiteral(path.node.property)) {
-            const property = path.node.property.value;
-
-            // Replace with dot notation
-            path.node.computed = false;
-            path.node.property = t.identifier(property);
-        }
-    }
-});
-console.log("> Simplified dict expressions");
-
+improveStrings(ast);
+console.log("> Simplified dict expressions and binary expressions");
+matches = cleanSwitchCases(ast);
+console.log(`> Replaced ${matches} switch cases`);
+replaceUnusedFunction(ast);
+console.log("> Removed unused functions");
 
 const { code: newCode } = generate(ast);
 let outputFile = process.argv[3] || 'out.js';
-fs.writeFileSync(outputFile, newCode, 'utf-8');
+fs.writeFileSync(outputFile, newCode.replace('returnervar = ', 'return '), 'utf-8');
 console.log(`> Saved to ${outputFile}`);
 console.log("<><><><><><><><><<><><><><><><><><<><><><><><><><><<><><><><><><><><>")

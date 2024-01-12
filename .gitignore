@@ -1,1 +1,15 @@
 node_modules/
+__pycache__/
+*.py
+*.txt
+*.json
+helpers/
+*.html
+browserData.js
+env.js
+result.js
+signals.js
+test.js
+decryptor.js
+img/.DS_Store
+.DS_Store
